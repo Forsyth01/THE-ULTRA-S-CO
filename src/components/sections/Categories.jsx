@@ -13,7 +13,7 @@ export default function Categories() {
       id="shop"
     >
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 md:mb-10 lg:mb-11">
+      <div className="flex  sm:flex-row items-end justify-between gap-4 sm:gap-6 mb-6 sm:mb-8 md:mb-10 lg:mb-11">
         <div>
           <motion.span
             initial={{ opacity: 0, y: 10 }}
