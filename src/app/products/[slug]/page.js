@@ -5,7 +5,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronLeft, Minus, Plus, ShoppingBag, Heart, Truck, RotateCcw, Shield, Check } from "lucide-react";
+import { ChevronLeft, Minus, Plus, ShoppingBag, Truck, RotateCcw, Shield, Check } from "lucide-react";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -142,12 +142,12 @@ export default function ProductPage() {
             </div>
 
             {/* Actions */}
-            <div className="flex gap-4 mb-8">
+            <div className="mb-8">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleAddToCart}
-                className="flex-1 flex items-center justify-center gap-3 bg-green font-semibold text-[13px] tracking-[0.08em] uppercase py-4 rounded hover:opacity-85 transition-opacity"
+                className="w-full flex items-center justify-center gap-3 bg-green font-semibold text-[13px] tracking-[0.08em] uppercase py-4 rounded hover:opacity-85 transition-opacity"
               >
                 <AnimatePresence mode="wait">
                   {added ? (
@@ -174,13 +174,6 @@ export default function ProductPage() {
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-14 border border-border rounded flex items-center justify-center hover:border-white transition-colors"
-              >
-                <Heart size={20} />
               </motion.button>
             </div>
 

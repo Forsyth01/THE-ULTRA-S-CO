@@ -1,6 +1,7 @@
 import { Anton, DM_Sans } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import ScrollToTop from "@/components/utils/ScrollToTop";
 
 const anton = Anton({
   weight: "400",
@@ -22,7 +23,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${anton.variable} ${dmSans.variable}`}>
       <body className="min-h-screen bg-black text-white font-body antialiased">
-        <Providers>{children}</Providers>
+        <Providers>
+          <ScrollToTop />
+          {children}
+        </Providers>
       </body>
     </html>
   );
