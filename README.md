@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# The Ultra's Co
+
+Premium headwear e-commerce website built for the ultras, the fans, the faithful. Snapbacks, beanies & bucket hats — forged in soccer culture.
+
+## Tech Stack
+
+- **Framework**: Next.js 15
+- **Styling**: Tailwind CSS v4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **Fonts**: Anton (display) + DM Sans (body)
+
+## Features
+
+- Responsive design with mobile-first approach
+- Shopping cart with localStorage persistence
+- Product catalog with categories (Snapbacks, Beanies, Bucket Hats)
+- Individual product pages with related products
+- Smooth animations and transitions
+- Announcement bar with promotional messaging
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Installation
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/                    # Next.js app router pages
+│   ├── about/             # About page
+│   ├── cart/              # Shopping cart page
+│   ├── collections/       # Category collection pages
+│   ├── contact/           # Contact page
+│   ├── products/          # Product detail pages
+│   └── shop/              # Shop all products page
+├── components/
+│   ├── layout/            # Layout components (Navbar, Footer, etc.)
+│   ├── sections/          # Page sections (Hero, Categories, etc.)
+│   └── ui/                # Reusable UI components
+├── context/               # React context providers
+│   └── CartContext.jsx    # Shopping cart state management
+└── data/                  # Static data
+    └── products.js        # Product catalog
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Environment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+No environment variables required for basic functionality. Images are configured to allow all HTTPS hosts.
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy this Next.js app is to use the [Vercel Platform](https://vercel.com/new).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## License
+
+Private - All rights reserved.
