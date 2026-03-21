@@ -206,7 +206,7 @@ export default function ProductPage() {
         {relatedProducts.length > 0 && (
           <section className="px-6 md:px-20 py-16 border-t border-border">
             <h2 className="font-display text-[32px] mb-8">YOU MAY ALSO LIKE</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
               {relatedProducts.map((product, index) => (
                 <motion.div
                   key={product.id}
