@@ -8,12 +8,12 @@ export default function Hero() {
   return (
     <section className="min-h-[100svh] lg:min-h-[90vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
       {/* Left Content */}
-      <div className="flex flex-col justify-center px-4 xs:px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 py-10 sm:py-12 md:py-16 lg:py-20 order-1">
+      <div className="flex flex-col justify-center px-4 xs:px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 2xl:px-24 py-14 sm:py-12 md:py-16 lg:py-20 order-1">
         <motion.span
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-block text-[10px] xs:text-[11px] sm:text-xs font-semibold tracking-[0.12em] sm:tracking-[0.14em] uppercase text-green border border-green px-3 sm:px-4 py-1 sm:py-1.5 rounded-full mb-4 sm:mb-5 md:mb-6 lg:mb-7 w-fit"
+          className="inline-block text-[10px] xs:text-[11px] sm:text-xs font-semibold tracking-[0.12em] sm:tracking-[0.14em] uppercase text-green border border-green px-6 sm:px-4 py-1 sm:py-1.5 rounded-full mb-6 sm:mb-5 md:mb-6 lg:mb-7 w-fit"
         >
           New Season Drop
         </motion.span>
@@ -22,7 +22,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-display text-[74px] xs:text-[52px] sm:text-[60px] md:text-[72px] lg:text-[80px] xl:text-[88px] 2xl:text-[96px] leading-[0.9] sm:leading-[0.95] tracking-tight mb-4 sm:mb-5 md:mb-6 lg:mb-7"
+          className="font-display text-[70px] xs:text-[52px] sm:text-[60px] md:text-[72px] lg:text-[80px] xl:text-[88px] 2xl:text-[96px] leading-[0.9] sm:leading-[0.95] tracking-tight mb-4 sm:mb-5 md:mb-6 lg:mb-7"
         >
           WEAR
           <br />
@@ -35,7 +35,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-sm sm:text-base text-gray max-w-[320px] sm:max-w-[360px] md:max-w-[400px] mb-6 sm:mb-8 md:mb-10 lg:mb-11 leading-relaxed"
+          className=" sm:text-base text-gray max-w-[360px] sm:max-w-[360px] md:max-w-[400px] mb-6 sm:mb-8 md:mb-10 lg:mb-11 leading-relaxed"
         >
           Premium headwear built for the ultras, the fans, the faithful.
           Snapbacks, beanies & bucket hats — forged in soccer culture.
@@ -45,14 +45,12 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col xs:flex-row flex-wrap gap-3 sm:gap-3.5"
+          className="flex flex-row flex-wrap gap-3 sm:gap-3.5"
         >
-          <Button href="/shop" variant="primary" className=" w-full xs:w-auto text-center ">
-          <p className="text-black">
-            Shop the Collection
-          </p>
+          <Button href="/shop" variant="primary">
+            <span className="text-black">Shop the Collection</span>
           </Button>
-          <Button href="/about" variant="outline" className="w-full xs:w-auto text-center">
+          <Button href="/about" variant="outline">
             Our Story
           </Button>
         </motion.div>
