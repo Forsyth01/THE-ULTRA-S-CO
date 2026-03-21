@@ -22,7 +22,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="font-display text-[44px] xs:text-[52px] sm:text-[60px] md:text-[72px] lg:text-[80px] xl:text-[88px] 2xl:text-[96px] leading-[0.9] sm:leading-[0.95] tracking-tight mb-4 sm:mb-5 md:mb-6 lg:mb-7"
+          className="font-display text-[74px] xs:text-[52px] sm:text-[60px] md:text-[72px] lg:text-[80px] xl:text-[88px] 2xl:text-[96px] leading-[0.9] sm:leading-[0.95] tracking-tight mb-4 sm:mb-5 md:mb-6 lg:mb-7"
         >
           WEAR
           <br />
