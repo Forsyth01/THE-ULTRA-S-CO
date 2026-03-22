@@ -22,18 +22,18 @@ export default function About() {
       >
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-radial from-green/10 via-transparent to-transparent" />
-
+<img src="/uc.jpg" alt="" className="object-cover" />
         {/* Large UC text */}
-        <span className="font-display text-[80px] md:text-[120px] text-border select-none">
+        {/* <span className="font-display text-[80px] md:text-[120px] text-border select-none">
           UC
-        </span>
+        </span> */}
 
         {/* Decorative elements */}
-        <motion.div
+        {/* <motion.div
           animate={{ rotate: 360 }}
           transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
           className="absolute top-10 right-10 w-20 h-20 border border-border rounded-full"
-        />
+        /> */}
         <motion.div
           animate={{ rotate: -360 }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
