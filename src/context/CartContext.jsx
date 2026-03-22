@@ -152,7 +152,8 @@ export function CartProvider({ children }) {
     localStorage.removeItem("shopifyCartId");
   }, []);
 
-  const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
+  // Count unique items in cart (not total quantity)
+  const cartCount = cart.items.length;
 
   return (
     <CartContext.Provider
