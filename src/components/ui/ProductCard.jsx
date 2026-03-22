@@ -14,7 +14,7 @@ export default function ProductCard({ product }) {
   const getBadgeClass = (badge) => {
     if (badge === "new") return "bg-green text-black";
     if (badge === "hot") return "bg-[#ff4d4d] text-white";
-    return "";
+    return ""; 
   };
 
   const isOutOfStock = product.availableForSale === false;
