@@ -8,7 +8,7 @@ import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useCart();
+  const { addToCart, isLoading } = useCart();
   const [added, setAdded] = useState(false);
 
   const getBadgeClass = (badge) => {
@@ -17,9 +17,11 @@ export default function ProductCard({ product }) {
     return "";
   };
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     e.preventDefault();
-    addToCart(product);
+    if (!product.variantId || isLoading) return;
+
+    await addToCart(product.variantId);
     setAdded(true);
     setTimeout(() => setAdded(false), 1500);
   };

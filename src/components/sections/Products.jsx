@@ -3,9 +3,8 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import ProductCard from "@/components/ui/ProductCard";
-import { products } from "@/data/products";
 
-export default function Products() {
+export default function Products({ products = [] }) {
   const featuredProducts = products.slice(0, 4);
 
   return (
@@ -60,6 +59,13 @@ export default function Products() {
           </motion.div>
         ))}
       </div>
+
+      {/* Empty State */}
+      {featuredProducts.length === 0 && (
+        <div className="text-center py-20">
+          <p className="text-gray text-lg">No products available.</p>
+        </div>
+      )}
     </section>
   );
 }

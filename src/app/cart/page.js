@@ -4,20 +4,53 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, ArrowRight, Minus, Plus, Trash2, AlertTriangle, X } from "lucide-react";
+import {
+  ShoppingBag,
+  ArrowRight,
+  Minus,
+  Plus,
+  Trash2,
+  AlertTriangle,
+  X,
+  Loader2,
+} from "lucide-react";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
 
 export default function CartPage() {
-  const { cart, updateQuantity, removeFromCart, clearCart, cartTotal, cartCount } = useCart();
+  const {
+    cart,
+    updateQuantity,
+    removeFromCart,
+    clearCart,
+    cartTotal,
+    cartCount,
+    checkoutUrl,
+    isLoading,
+    isLoaded,
+  } = useCart();
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleClearCart = () => {
     clearCart();
     setShowClearConfirm(false);
   };
+
+  // Show loading state while cart is being fetched
+  if (!isLoaded) {
+    return (
+      <>
+        <AnnouncementBar />
+        <Navbar />
+        <main className="px-6 md:px-20 py-16 min-h-[60vh] flex items-center justify-center">
+          <Loader2 size={32} className="animate-spin text-green" />
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -73,7 +106,7 @@ export default function CartPage() {
               <div className="space-y-6">
                 {cart.map((item, index) => (
                   <motion.div
-                    key={item.id}
+                    key={item.lineId}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + index * 0.05 }}
@@ -90,18 +123,21 @@ export default function CartPage() {
                         />
                       </div>
                       <div className="flex flex-col justify-center">
-                        <span className="text-[10px] text-gray tracking-[0.06em] uppercase mb-1">
-                          {item.category}
-                        </span>
                         <Link
                           href={`/products/${item.slug}`}
                           className="text-[14px] font-medium hover:text-green transition-colors"
                         >
                           {item.name}
                         </Link>
+                        {item.variantTitle && (
+                          <span className="text-[12px] text-gray">
+                            {item.variantTitle}
+                          </span>
+                        )}
                         <button
-                          onClick={() => removeFromCart(item.id)}
-                          className="flex items-center gap-1 text-[11px] text-gray hover:text-red-500 mt-2 transition-colors sm:hidden"
+                          onClick={() => removeFromCart(item.lineId)}
+                          disabled={isLoading}
+                          className="flex items-center gap-1 text-[11px] text-gray hover:text-red-500 mt-2 transition-colors sm:hidden disabled:opacity-50"
                         >
                           <Trash2 size={12} />
                           Remove
@@ -111,11 +147,18 @@ export default function CartPage() {
 
                     {/* Quantity */}
                     <div className="sm:col-span-2 flex items-center justify-between sm:justify-center">
-                      <span className="text-[11px] text-gray uppercase sm:hidden">Qty:</span>
+                      <span className="text-[11px] text-gray uppercase sm:hidden">
+                        Qty:
+                      </span>
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="w-8 h-8 border border-border rounded flex items-center justify-center hover:border-white transition-colors"
+                          onClick={() =>
+                            item.quantity > 1
+                              ? updateQuantity(item.lineId, item.quantity - 1)
+                              : removeFromCart(item.lineId)
+                          }
+                          disabled={isLoading}
+                          className="w-8 h-8 border border-border rounded flex items-center justify-center hover:border-white transition-colors disabled:opacity-50"
                         >
                           <Minus size={12} />
                         </button>
@@ -123,8 +166,11 @@ export default function CartPage() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="w-8 h-8 border border-border rounded flex items-center justify-center hover:border-white transition-colors"
+                          onClick={() =>
+                            updateQuantity(item.lineId, item.quantity + 1)
+                          }
+                          disabled={isLoading}
+                          className="w-8 h-8 border border-border rounded flex items-center justify-center hover:border-white transition-colors disabled:opacity-50"
                         >
                           <Plus size={12} />
                         </button>
@@ -133,17 +179,26 @@ export default function CartPage() {
 
                     {/* Price */}
                     <div className="sm:col-span-2 flex items-center justify-between sm:justify-end">
-                      <span className="text-[11px] text-gray uppercase sm:hidden">Price:</span>
-                      <span className="font-display">${item.price}</span>
+                      <span className="text-[11px] text-gray uppercase sm:hidden">
+                        Price:
+                      </span>
+                      <span className="font-display">
+                        ${item.price.toFixed(2)}
+                      </span>
                     </div>
 
                     {/* Total */}
                     <div className="sm:col-span-2 flex items-center justify-between sm:justify-end gap-4">
-                      <span className="text-[11px] text-gray uppercase sm:hidden">Total:</span>
-                      <span className="font-display text-green">${item.price * item.quantity}</span>
+                      <span className="text-[11px] text-gray uppercase sm:hidden">
+                        Total:
+                      </span>
+                      <span className="font-display text-green">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </span>
                       <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="hidden sm:flex items-center justify-center w-8 h-8 text-gray hover:text-red-500 transition-colors"
+                        onClick={() => removeFromCart(item.lineId)}
+                        disabled={isLoading}
+                        className="hidden sm:flex items-center justify-center w-8 h-8 text-gray hover:text-red-500 transition-colors disabled:opacity-50"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -156,7 +211,8 @@ export default function CartPage() {
               <div className="mt-8 pt-6 border-t border-border">
                 <button
                   onClick={() => setShowClearConfirm(true)}
-                  className="flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 font-semibold text-[13px] tracking-[0.06em] uppercase hover:bg-red-500/20 hover:border-red-500/50 transition-all"
+                  disabled={isLoading}
+                  className="flex items-center gap-2 px-6 py-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-500 font-semibold text-[13px] tracking-[0.06em] uppercase hover:bg-red-500/20 hover:border-red-500/50 transition-all disabled:opacity-50"
                 >
                   <Trash2 size={18} />
                   Clear Entire Cart
@@ -177,31 +233,38 @@ export default function CartPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-[14px]">
                     <span className="text-gray">Items ({cartCount})</span>
-                    <span>${cartTotal}</span>
+                    <span>${cartTotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-gray">Shipping</span>
-                    <span>{cartTotal >= 60 ? "Free" : "$8"}</span>
+                    <span>Calculated at checkout</span>
                   </div>
-                  {cartTotal < 60 && (
-                    <p className="text-[12px] text-gray">
-                      Add ${60 - cartTotal} more for free shipping!
-                    </p>
-                  )}
                 </div>
 
                 <div className="border-t border-border pt-4 mb-6">
                   <div className="flex justify-between font-display text-xl">
-                    <span>Total</span>
-                    <span className="text-green">
-                      ${cartTotal >= 60 ? cartTotal : cartTotal + 8}
-                    </span>
+                    <span>Subtotal</span>
+                    <span className="text-green">${cartTotal.toFixed(2)}</span>
                   </div>
                 </div>
 
-                <button className="w-full bg-green py-4 rounded text-[13px] font-semibold tracking-[0.08em] uppercase hover:opacity-85 transition-opacity">
-                  <span className="text-black">Checkout</span>
-                </button>
+                {checkoutUrl ? (
+                  <a
+                    href={checkoutUrl}
+                    className="w-full bg-green py-4 rounded text-[13px] font-semibold tracking-[0.08em] uppercase hover:opacity-85 transition-opacity block text-center"
+                  >
+                    <span className="text-black">Proceed to Checkout</span>
+                  </a>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full bg-green py-4 rounded text-[13px] font-semibold tracking-[0.08em] uppercase opacity-50 cursor-not-allowed"
+                  >
+                    <span className="text-black">
+                      {isLoading ? "Loading..." : "Checkout Unavailable"}
+                    </span>
+                  </button>
+                )}
 
                 <Link
                   href="/shop"
@@ -251,7 +314,9 @@ export default function CartPage() {
               </div>
 
               <p className="text-gray text-[14px] mb-6">
-                Are you sure you want to remove all {cartCount} item{cartCount > 1 ? "s" : ""} from your cart? This action cannot be undone.
+                Are you sure you want to remove all {cartCount} item
+                {cartCount > 1 ? "s" : ""} from your cart? This action cannot be
+                undone.
               </p>
 
               <div className="flex gap-3">

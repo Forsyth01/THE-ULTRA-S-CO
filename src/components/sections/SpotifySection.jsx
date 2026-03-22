@@ -2,7 +2,15 @@
 
 import { motion } from "framer-motion";
 import { Play, Music } from "lucide-react";
-import { tracks } from "@/data/products";
+
+// Static tracks data for the decorative playlist display
+const tracks = [
+  { id: 1, name: "You'll Never Walk Alone", artist: "Gerry & The Pacemakers", duration: "2:57" },
+  { id: 2, name: "Three Little Birds", artist: "Bob Marley", duration: "3:00" },
+  { id: 3, name: "Freed from Desire", artist: "GALA", duration: "3:42" },
+  { id: 4, name: "Seven Nation Army", artist: "The White Stripes", duration: "3:52" },
+  { id: 5, name: "Hey Jude", artist: "The Beatles", duration: "4:35" },
+];
 
 export default function SpotifySection() {
   return (

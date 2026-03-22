@@ -1,15 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Filter, Grid, List } from "lucide-react";
+import { Filter } from "lucide-react";
 import ProductCard from "@/components/ui/ProductCard";
-import { products } from "@/data/products";
 
-const filters = ["All", "Snapback", "Beanie", "Bucket Hat"];
-
-export default function ShopContent() {
+export default function ShopContent({ products = [] }) {
   const [activeFilter, setActiveFilter] = useState("All");
+
+  // Get unique categories from products
+  const filters = useMemo(() => {
+    const categories = [...new Set(products.map((p) => p.category))];
+    return ["All", ...categories];
+  }, [products]);
 
   const filteredProducts =
     activeFilter === "All"

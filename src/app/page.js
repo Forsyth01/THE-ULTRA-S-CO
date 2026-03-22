@@ -7,8 +7,23 @@ import Categories from "@/components/sections/Categories";
 import Products from "@/components/sections/Products";
 import About from "@/components/sections/About";
 import SpotifySection from "@/components/sections/SpotifySection";
+import { getAllProducts, getAllCollections } from "@/lib/shopify/api";
 
-export default function Home() {
+export default async function Home() {
+  // Fetch data from Shopify with error handling
+  let products = [];
+  let collections = [];
+
+  try {
+    [products, collections] = await Promise.all([
+      getAllProducts(),
+      getAllCollections(),
+    ]);
+  } catch (error) {
+    console.error("Error fetching Shopify data:", error);
+    // Continue with empty arrays - page will still render
+  }
+
   return (
     <>
       <AnnouncementBar />
@@ -16,8 +31,8 @@ export default function Home() {
       <main>
         <Hero />
         <Marquee />
-        <Categories />
-        <Products />
+        <Categories categories={collections} />
+        <Products products={products} />
         <SpotifySection />
         <About />
       </main>
@@ -25,3 +40,6 @@ export default function Home() {
     </>
   );
 }
+
+// Revalidate every hour
+export const revalidate = 3600;

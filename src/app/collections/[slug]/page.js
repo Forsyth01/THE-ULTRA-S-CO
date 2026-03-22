@@ -1,82 +1,86 @@
-"use client";
-
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
+import Link from "next/link";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import ProductCard from "@/components/ui/ProductCard";
-import { products, categories } from "@/data/products";
+import CollectionContent from "@/components/sections/CollectionContent";
+import { getCollectionByHandle, getAllCollections } from "@/lib/shopify/api";
 
-const categoryMap = {
-  snapbacks: "Snapback",
-  beanies: "Beanie",
-  "bucket-hats": "Bucket Hat",
-};
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
 
-export default function CollectionPage() {
-  const params = useParams();
-  const slug = params.slug;
+  try {
+    const data = await getCollectionByHandle(slug);
 
-  const categoryName = categoryMap[slug] || slug;
-  const category = categories.find((c) => c.id === slug);
-  const filteredProducts = products.filter((p) => p.category === categoryName);
+    if (!data) {
+      return {
+        title: "Collection Not Found | The Ultra's Co",
+      };
+    }
+
+    return {
+      title: `${data.collection.name} | The Ultra's Co`,
+      description:
+        data.collection.description ||
+        `Shop our ${data.collection.name} collection.`,
+    };
+  } catch (error) {
+    console.error("Error generating metadata:", error);
+    return {
+      title: "Collection | The Ultra's Co",
+    };
+  }
+}
+
+export default async function CollectionPage({ params }) {
+  const { slug } = await params;
+  let data = null;
+
+  try {
+    data = await getCollectionByHandle(slug);
+  } catch (error) {
+    console.error("Error fetching collection:", error);
+  }
+
+  if (!data) {
+    return (
+      <>
+        <AnnouncementBar />
+        <Navbar />
+        <main className="px-6 md:px-20 py-20 text-center">
+          <h1 className="font-display text-4xl mb-4">Collection Not Found</h1>
+          <Link href="/shop" className="text-green hover:underline">
+            Back to Shop
+          </Link>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
       <AnnouncementBar />
       <Navbar />
-      <main className="px-6 md:px-20 py-16">
-        {/* Header */}
-        <div className="mb-12">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="block text-[11px] font-semibold tracking-[0.14em] uppercase text-green mb-2.5"
-          >
-            Collection
-          </motion.span>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="font-display text-[48px] md:text-[64px] leading-none mb-4"
-          >
-            {category?.name?.toUpperCase() || slug.toUpperCase()}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-gray text-base max-w-xl"
-          >
-            Explore our collection of premium {categoryName.toLowerCase()}s.
-            Each piece is crafted with attention to detail and built for the
-            faithful.
-          </motion.p>
-        </div>
-
-        {/* Products */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-          {filteredProducts.map((product, index) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <ProductCard product={product} />
-            </motion.div>
-          ))}
-        </div>
-
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-20">
-            <p className="text-gray text-lg">No products found in this collection.</p>
-          </div>
-        )}
-      </main>
+      <CollectionContent
+        collection={data.collection}
+        products={data.products}
+      />
       <Footer />
     </>
   );
 }
+
+// Optional: Generate static paths for all collections
+export async function generateStaticParams() {
+  try {
+    const collections = await getAllCollections();
+    return collections.map((collection) => ({
+      slug: collection.id,
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// Revalidate every hour
+export const revalidate = 3600;

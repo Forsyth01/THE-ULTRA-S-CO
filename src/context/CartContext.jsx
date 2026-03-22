@@ -1,92 +1,145 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import {
+  createCart,
+  addToCart as addToCartApi,
+  updateCart,
+  removeFromCart as removeFromCartApi,
+  getCart,
+} from "@/lib/shopify/cart";
+import { transformCart } from "@/lib/shopify/transformers";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({
+    id: null,
+    checkoutUrl: null,
+    items: [],
+    subtotal: 0,
+    total: 0,
+  });
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load cart from localStorage on mount
+  // Load cart from Shopify on mount
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      try {
-        const parsed = JSON.parse(savedCart);
-        // Filter out invalid items (missing required fields)
-        const validCart = parsed.filter(
-          (item) => item.id && item.name && item.price && item.image
-        );
-        setCart(validCart);
-      } catch {
-        // If parsing fails, clear the cart
-        localStorage.removeItem("cart");
-      }
+    const savedCartId = localStorage.getItem("shopifyCartId");
+
+    if (savedCartId) {
+      getCart(savedCartId)
+        .then((shopifyCart) => {
+          if (shopifyCart) {
+            setCart(transformCart(shopifyCart));
+          } else {
+            // Cart no longer exists, clear it
+            localStorage.removeItem("shopifyCartId");
+          }
+        })
+        .catch((error) => {
+          console.error("Error loading cart:", error);
+          localStorage.removeItem("shopifyCartId");
+        })
+        .finally(() => {
+          setIsLoaded(true);
+        });
+    } else {
+      setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cartId to localStorage whenever it changes
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("cart", JSON.stringify(cart));
+    if (cart.id) {
+      localStorage.setItem("shopifyCartId", cart.id);
     }
-  }, [cart, isLoaded]);
+  }, [cart.id]);
 
-  const addToCart = (product, quantity = 1) => {
-    setCart((prevCart) => {
-      const existingItem = prevCart.find((item) => item.id === product.id);
+  const addToCart = useCallback(
+    async (variantId, quantity = 1) => {
+      setIsLoading(true);
+      try {
+        const lines = [{ merchandiseId: variantId, quantity }];
 
-      if (existingItem) {
-        return prevCart.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
+        let shopifyCart;
+        if (cart.id) {
+          shopifyCart = await addToCartApi(cart.id, lines);
+        } else {
+          shopifyCart = await createCart(lines);
+        }
+
+        setCart(transformCart(shopifyCart));
+      } catch (error) {
+        console.error("Error adding to cart:", error);
+      } finally {
+        setIsLoading(false);
       }
-
-      return [...prevCart, { ...product, quantity }];
-    });
-  };
-
-  const removeFromCart = (productId) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-  };
-
-  const updateQuantity = (productId, quantity) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === productId ? { ...item, quantity } : item
-      )
-    );
-  };
-
-  const clearCart = () => {
-    setCart([]);
-  };
-
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
+    },
+    [cart.id]
   );
+
+  const updateQuantity = useCallback(
+    async (lineId, quantity) => {
+      if (!cart.id || quantity < 1) return;
+
+      setIsLoading(true);
+      try {
+        const shopifyCart = await updateCart(cart.id, [{ id: lineId, quantity }]);
+        setCart(transformCart(shopifyCart));
+      } catch (error) {
+        console.error("Error updating cart:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [cart.id]
+  );
+
+  const removeFromCart = useCallback(
+    async (lineId) => {
+      if (!cart.id) return;
+
+      setIsLoading(true);
+      try {
+        const shopifyCart = await removeFromCartApi(cart.id, [lineId]);
+        setCart(transformCart(shopifyCart));
+      } catch (error) {
+        console.error("Error removing from cart:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [cart.id]
+  );
+
+  const clearCart = useCallback(() => {
+    setCart({
+      id: null,
+      checkoutUrl: null,
+      items: [],
+      subtotal: 0,
+      total: 0,
+    });
+    localStorage.removeItem("shopifyCartId");
+  }, []);
+
+  const cartCount = cart.items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <CartContext.Provider
       value={{
-        cart,
+        cart: cart.items,
+        cartId: cart.id,
+        checkoutUrl: cart.checkoutUrl,
         addToCart,
         removeFromCart,
         updateQuantity,
         clearCart,
         cartCount,
-        cartTotal,
+        cartTotal: cart.total,
+        cartSubtotal: cart.subtotal,
+        isLoading,
         isLoaded,
       }}
     >

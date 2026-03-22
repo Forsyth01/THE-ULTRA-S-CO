@@ -4,9 +4,8 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
-import { categories } from "@/data/products";
 
-export default function Categories() {
+export default function Categories({ categories = [] }) {
   return (
     <section
       className="px-4 xs:px-5 sm:px-6 md:px-10 lg:px-16 xl:px-20 2xl:px-24 py-12 sm:py-14 md:py-16 lg:py-20"
@@ -98,6 +97,13 @@ export default function Categories() {
           </motion.div>
         ))}
       </div>
+
+      {/* Empty State */}
+      {categories.length === 0 && (
+        <div className="text-center py-20">
+          <p className="text-gray text-lg">No collections available.</p>
+        </div>
+      )}
     </section>
   );
 }
