@@ -1,10 +1,29 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Button from "@/components/ui/Button";
 
+const heroImages = [
+  "/headwarmer/headwarmer (1).jpg",
+  "/headwarmer/headwarmer (2).jpg",
+  "/headwarmer/headwarmer (3).jpg",
+  "/headwarmer/headwarmer (4).jpg",
+];
+
 export default function Hero() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  // Auto-transition images every 5 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % heroImages.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="min-h-[100svh] lg:min-h-[90vh] grid grid-cols-1 lg:grid-cols-2 overflow-hidden">
       {/* Left Content */}
@@ -58,22 +77,26 @@ export default function Hero() {
 
       {/* Right Visual */}
       <div className="relative bg-mid min-h-[280px] xs:min-h-[320px] sm:min-h-[380px] md:min-h-[420px] lg:min-h-0 overflow-hidden order-2">
-        <motion.div
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="absolute inset-0"
-        >
-          <Image
-            src="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=1200&h=1200&fit=crop"
-            alt="Premium snapback cap"
-            fill
-            className="object-cover"
-            priority
-            sizes="(max-width: 1024px) 100vw, 50vw"
-          />
-          <div className="absolute inset-0 bg-black/20" />
-        </motion.div>
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={currentImageIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0"
+          >
+            <Image
+              src={heroImages[currentImageIndex]}
+              alt="Premium headwear"
+              fill
+              className="object-cover"
+              priority={currentImageIndex === 0}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+          </motion.div>
+        </AnimatePresence>
 
         {/* Badge */}
         <motion.div
