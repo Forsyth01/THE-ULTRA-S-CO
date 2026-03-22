@@ -22,8 +22,10 @@ export default function ProductDetail({ product, relatedProducts }) {
   const [added, setAdded] = useState(false);
   const { addToCart, isLoading } = useCart();
 
+  const isOutOfStock = product.availableForSale === false;
+
   const handleAddToCart = async () => {
-    if (!product.variantId || isLoading) return;
+    if (!product.variantId || isLoading || isOutOfStock) return;
 
     await addToCart(product.variantId, quantity);
     setAdded(true);
@@ -126,14 +128,28 @@ export default function ProductDetail({ product, relatedProducts }) {
           {/* Actions */}
           <div className="mb-8">
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={!isOutOfStock ? { scale: 1.02 } : {}}
+              whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
               onClick={handleAddToCart}
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 bg-green font-semibold text-[13px] tracking-[0.08em] uppercase py-4 rounded hover:opacity-85 transition-opacity disabled:opacity-50"
+              disabled={isLoading || isOutOfStock}
+              className={`w-full flex items-center justify-center gap-3 font-semibold text-[13px] tracking-[0.08em] uppercase py-4 rounded transition-opacity ${
+                isOutOfStock
+                  ? "bg-gray/30 cursor-not-allowed"
+                  : "bg-green hover:opacity-85 disabled:opacity-50"
+              }`}
             >
               <AnimatePresence mode="wait">
-                {added ? (
+                {isOutOfStock ? (
+                  <motion.span
+                    key="outofstock"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="text-gray"
+                  >
+                    Out of Stock
+                  </motion.span>
+                ) : added ? (
                   <motion.span
                     key="added"
                     initial={{ opacity: 0, y: 10 }}

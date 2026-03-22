@@ -17,9 +17,11 @@ export default function ProductCard({ product }) {
     return "";
   };
 
+  const isOutOfStock = product.availableForSale === false;
+
   const handleAddToCart = async (e) => {
     e.preventDefault();
-    if (!product.variantId || isLoading) return;
+    if (!product.variantId || isLoading || isOutOfStock) return;
 
     await addToCart(product.variantId);
     setAdded(true);
@@ -60,17 +62,29 @@ export default function ProductCard({ product }) {
 
       {/* Add to Cart Button */}
       <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        whileHover={!isOutOfStock ? { scale: 1.02 } : {}}
+        whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
         className={`w-full mt-2 sm:mt-2.5 border text-[10px] sm:text-[11px] font-semibold tracking-[0.08em] sm:tracking-[0.1em] uppercase py-2 sm:py-2.5 rounded transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${
-          added
+          isOutOfStock
+            ? "bg-mid border-border text-gray cursor-not-allowed opacity-60"
+            : added
             ? "bg-green border-green text-black"
             : "bg-mid border-border text-white hover:bg-green hover:border-green hover:text-black"
         }`}
         onClick={handleAddToCart}
+        disabled={isOutOfStock}
       >
         <AnimatePresence mode="wait">
-          {added ? (
+          {isOutOfStock ? (
+            <motion.span
+              key="outofstock"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              Out of Stock
+            </motion.span>
+          ) : added ? (
             <motion.span
               key="added"
               initial={{ opacity: 0, y: 10 }}

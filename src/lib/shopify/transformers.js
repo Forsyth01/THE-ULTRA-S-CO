@@ -14,6 +14,9 @@ export function transformProduct(shopifyProduct) {
   if (tags.includes("new")) badge = "new";
   else if (tags.includes("hot")) badge = "hot";
 
+  // Check if product is available (product level or variant level)
+  const availableForSale = shopifyProduct.availableForSale ?? firstVariant?.availableForSale ?? true;
+
   return {
     id: shopifyProduct.id,
     variantId: firstVariant?.id,
@@ -26,6 +29,7 @@ export function transformProduct(shopifyProduct) {
     imageAlt: firstImage?.altText || shopifyProduct.title,
     description: shopifyProduct.description || "",
     descriptionHtml: shopifyProduct.descriptionHtml || "",
+    availableForSale: availableForSale,
   };
 }
 

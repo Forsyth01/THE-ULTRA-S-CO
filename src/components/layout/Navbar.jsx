@@ -87,11 +87,17 @@ export default function Navbar() {
 
           <Link
             href="/cart"
-            className="flex items-center gap-1.5 sm:gap-2 bg-green text-black px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded text-[11px] sm:text-[12px] md:text-[13px] font-semibold tracking-[0.06em] uppercase hover:opacity-85 transition-opacity"
+            className="relative flex items-center gap-1.5 sm:gap-2 bg-green text-black px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded text-[11px] sm:text-[12px] md:text-[13px] font-semibold tracking-[0.06em] uppercase hover:opacity-85 transition-opacity"
           >
             <ShoppingBag size={14} className="sm:w-4 sm:h-4 text-black" />
             <span className="hidden xs:inline text-black">Cart</span>
             <span className="hidden sm:inline text-black">({cartCount})</span>
+            {/* Mobile cart count badge */}
+            {cartCount > 0 && (
+              <span className="sm:hidden absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] bg-black text-green text-[10px] font-bold rounded-full flex items-center justify-center px-1">
+                {cartCount}
+              </span>
+            )}
           </Link>
 
           {/* Mobile Menu Button */}

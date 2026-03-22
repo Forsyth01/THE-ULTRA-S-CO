@@ -28,11 +28,13 @@ export const GET_PRODUCTS = `
               }
             }
           }
+          availableForSale
           variants(first: 1) {
             edges {
               node {
                 id
                 title
+                availableForSale
                 price {
                   amount
                   currencyCode
@@ -60,6 +62,7 @@ export const GET_PRODUCT = `
       category {
         name
       }
+      availableForSale
       priceRange {
         minVariantPrice {
           amount
@@ -145,6 +148,7 @@ export const GET_COLLECTION_BY_HANDLE = `
             category {
               name
             }
+            availableForSale
             priceRange {
               minVariantPrice {
                 amount
@@ -163,6 +167,7 @@ export const GET_COLLECTION_BY_HANDLE = `
               edges {
                 node {
                   id
+                  availableForSale
                 }
               }
             }

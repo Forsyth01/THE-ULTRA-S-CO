@@ -23,31 +23,59 @@ export function CartProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load cart from Shopify on mount
-  useEffect(() => {
+  // Function to refresh cart from Shopify
+  const refreshCart = useCallback(async () => {
     const savedCartId = localStorage.getItem("shopifyCartId");
 
     if (savedCartId) {
-      getCart(savedCartId)
-        .then((shopifyCart) => {
-          if (shopifyCart) {
-            setCart(transformCart(shopifyCart));
-          } else {
-            // Cart no longer exists, clear it
-            localStorage.removeItem("shopifyCartId");
-          }
-        })
-        .catch((error) => {
-          console.error("Error loading cart:", error);
+      try {
+        const shopifyCart = await getCart(savedCartId);
+        if (shopifyCart) {
+          setCart(transformCart(shopifyCart));
+        } else {
+          // Cart no longer exists (completed checkout), clear it
           localStorage.removeItem("shopifyCartId");
-        })
-        .finally(() => {
-          setIsLoaded(true);
-        });
-    } else {
-      setIsLoaded(true);
+          setCart({
+            id: null,
+            checkoutUrl: null,
+            items: [],
+            subtotal: 0,
+            total: 0,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading cart:", error);
+        localStorage.removeItem("shopifyCartId");
+      }
     }
+    setIsLoaded(true);
   }, []);
+
+  // Load cart from Shopify on mount
+  useEffect(() => {
+    refreshCart();
+  }, [refreshCart]);
+
+  // Refresh cart when user returns to the page (from checkout)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        refreshCart();
+      }
+    };
+
+    const handleFocus = () => {
+      refreshCart();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("focus", handleFocus);
+    };
+  }, [refreshCart]);
 
   // Save cartId to localStorage whenever it changes
   useEffect(() => {
