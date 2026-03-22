@@ -20,16 +20,19 @@ import { useCart } from "@/context/CartContext";
 export default function ProductDetail({ product, relatedProducts }) {
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
-  const { addToCart, isLoading } = useCart();
+  const { addToCart, isItemLoading } = useCart();
 
   const isOutOfStock = product.availableForSale === false;
+  const isLoading = isItemLoading(product.variantId);
 
   const handleAddToCart = async () => {
     if (!product.variantId || isLoading || isOutOfStock) return;
 
-    await addToCart(product.variantId, quantity);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    const success = await addToCart(product.variantId, quantity);
+    if (success) {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 2000);
+    }
   };
 
   return (

@@ -8,7 +8,7 @@ import { Check } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 
 export default function ProductCard({ product }) {
-  const { addToCart, isLoading } = useCart();
+  const { addToCart, isItemLoading } = useCart();
   const [added, setAdded] = useState(false);
 
   const getBadgeClass = (badge) => {
@@ -18,14 +18,17 @@ export default function ProductCard({ product }) {
   };
 
   const isOutOfStock = product.availableForSale === false;
+  const isLoading = isItemLoading(product.variantId);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
     if (!product.variantId || isLoading || isOutOfStock) return;
 
-    await addToCart(product.variantId);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    const success = await addToCart(product.variantId);
+    if (success) {
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1500);
+    }
   };
 
   return (
@@ -62,17 +65,19 @@ export default function ProductCard({ product }) {
 
       {/* Add to Cart Button */}
       <motion.button
-        whileHover={!isOutOfStock ? { scale: 1.02 } : {}}
-        whileTap={!isOutOfStock ? { scale: 0.98 } : {}}
+        whileHover={!isOutOfStock && !isLoading ? { scale: 1.02 } : {}}
+        whileTap={!isOutOfStock && !isLoading ? { scale: 0.98 } : {}}
         className={`w-full mt-2 sm:mt-2.5 border text-[10px] sm:text-[11px] font-semibold tracking-[0.08em] sm:tracking-[0.1em] uppercase py-2 sm:py-2.5 rounded transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${
           isOutOfStock
             ? "bg-mid border-border text-gray cursor-not-allowed opacity-60"
+            : isLoading
+            ? "bg-mid border-green text-green"
             : added
             ? "bg-green border-green text-black"
             : "bg-mid border-border text-white hover:bg-green hover:border-green hover:text-black"
         }`}
         onClick={handleAddToCart}
-        disabled={isOutOfStock}
+        disabled={isOutOfStock || isLoading}
       >
         <AnimatePresence mode="wait">
           {isOutOfStock ? (
@@ -83,6 +88,15 @@ export default function ProductCard({ product }) {
               exit={{ opacity: 0, y: -10 }}
             >
               Out of Stock
+            </motion.span>
+          ) : isLoading ? (
+            <motion.span
+              key="loading"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+            >
+              Adding...
             </motion.span>
           ) : added ? (
             <motion.span

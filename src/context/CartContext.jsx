@@ -21,6 +21,7 @@ export function CartProvider({ children }) {
     total: 0,
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Function to refresh cart from Shopify
@@ -86,7 +87,7 @@ export function CartProvider({ children }) {
 
   const addToCart = useCallback(
     async (variantId, quantity = 1) => {
-      setIsLoading(true);
+      setLoadingItems((prev) => new Set(prev).add(variantId));
       try {
         const lines = [{ merchandiseId: variantId, quantity }];
 
@@ -98,13 +99,24 @@ export function CartProvider({ children }) {
         }
 
         setCart(transformCart(shopifyCart));
+        return true;
       } catch (error) {
         console.error("Error adding to cart:", error);
+        return false;
       } finally {
-        setIsLoading(false);
+        setLoadingItems((prev) => {
+          const next = new Set(prev);
+          next.delete(variantId);
+          return next;
+        });
       }
     },
     [cart.id]
+  );
+
+  const isItemLoading = useCallback(
+    (variantId) => loadingItems.has(variantId),
+    [loadingItems]
   );
 
   const updateQuantity = useCallback(
@@ -169,6 +181,7 @@ export function CartProvider({ children }) {
         cartTotal: cart.total,
         cartSubtotal: cart.subtotal,
         isLoading,
+        isItemLoading,
         isLoaded,
       }}
     >
