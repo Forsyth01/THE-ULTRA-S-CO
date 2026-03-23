@@ -69,8 +69,8 @@ export default function Hero() {
           <Button href="/shop" variant="primary">
             <span className="text-black">Shop the Collection</span>
           </Button>
-          <Button href="/about" variant="outline">
-            Our Story
+          <Button href="/shop" variant="outline">
+            Explore
           </Button>
         </motion.div>
       </div>
