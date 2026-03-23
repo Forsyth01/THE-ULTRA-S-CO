@@ -4,6 +4,7 @@ import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import Marquee from "@/components/sections/Marquee";
 import Categories from "@/components/sections/Categories";
+import ShopPreview from "@/components/sections/ShopPreview";
 import Products from "@/components/sections/Products";
 import About from "@/components/sections/About";
 import SpotifySection from "@/components/sections/SpotifySection";
@@ -19,6 +20,9 @@ export default async function Home() {
       getAllProducts(),
       getAllCollections(),
     ]);
+
+    // Shuffle products to show variety in featured section
+    products = products.sort(() => Math.random() - 0.5);
   } catch (error) {
     console.error("Error fetching Shopify data:", error);
     // Continue with empty arrays - page will still render
@@ -33,6 +37,7 @@ export default async function Home() {
         <Marquee />
         <Categories categories={collections} />
         <Products products={products} />
+        <ShopPreview products={products} />
         <SpotifySection />
         <About />
       </main>

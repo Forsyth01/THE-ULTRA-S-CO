@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, MapPin, Phone, Send } from "lucide-react";
+import { Mail, MapPin, Send } from "lucide-react";
 import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -144,26 +144,10 @@ export default function ContactPage() {
                       Email
                     </div>
                     <a
-                      href="mailto:hello@theultras.co"
+                      href="mailto:admin@setpiecesclothing.com"
                       className="text-white hover:text-green transition-colors"
                     >
-                      hello@theultras.co
-                    </a>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-green/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <Phone className="text-green" size={18} />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-gray mb-1">
-                      Phone
-                    </div>
-                    <a
-                      href="tel:+1234567890"
-                      className="text-white hover:text-green transition-colors"
-                    >
-                      +1 (234) 567-890
+                      admin@setpiecesclothing.com
                     </a>
                   </div>
                 </div>
@@ -175,7 +159,7 @@ export default function ContactPage() {
                     <div className="text-[11px] font-semibold tracking-[0.12em] uppercase text-gray mb-1">
                       Location
                     </div>
-                    <span className="text-white">Los Angeles, CA</span>
+                    <span className="text-white">USA</span>
                   </div>
                 </div>
               </div>

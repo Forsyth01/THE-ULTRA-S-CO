@@ -96,13 +96,13 @@ export default function ProductDetail({ product, relatedProducts }) {
             ${product.price}
           </div>
 
-          <p className="text-gray text-[15px] leading-relaxed mb-8">
+          {/* <p className="text-gray text-[15px] leading-relaxed mb-8">
             {product.description ||
               `Premium quality ${product.category?.toLowerCase() || "headwear"} crafted for the
               true fans. Features adjustable sizing, breathable materials, and
               our signature UC embroidered logo. Built to last, designed to
               stand out.`}
-          </p>
+          </p> */}
 
           {/* Quantity */}
           <div className="mb-6">
