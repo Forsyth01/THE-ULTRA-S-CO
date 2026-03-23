@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 
 export const metadata = {
   title: "The Ultra's Co — Headwear for the Culture",
-  description: "Premium headwear built for the ultras, the fans, the faithful. Snapbacks, beanies & bucket hats — forged in soccer culture.",
+  description: "Premium headwear built for the ultras, the fans, the faithful. Snapbacks, beanies & bucket hats",
 };
 
 export default function RootLayout({ children }) {
