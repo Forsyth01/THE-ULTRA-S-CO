@@ -71,43 +71,11 @@ export default function About() {
           transition={{ delay: 0.2 }}
           className="text-gray text-[15px] leading-relaxed mb-8"
         >
-          We started The Ultra&apos;s Co with a simple mission: create premium
-          headwear that represents the passion of soccer culture. From the
-          terraces to the streets, our hats are designed for those who live and
-          breathe the beautiful game. Every stitch, every design, every detail
-          is crafted with the faithful in mind.
+         No grand origin story about how we were struck by lightning at a match and suddenly knew our purpose. We just love soccer and wanted hats that actually looked good.
+
+The Ultra's Co started because we couldn't find headwear that matched the energy of terrace culture. So we made our own
         </motion.p>
 
-        {/* Stats */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.3 }}
-          className="flex gap-10 mb-9"
-        >
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <div className="font-display text-4xl text-green leading-none">
-                {stat.number}
-              </div>
-              <div className="text-[12px] text-gray tracking-[0.08em] uppercase mt-1">
-                {stat.label}
-              </div>
-            </div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-        >
-          <Button href="/about" variant="outline">
-            Learn More
-          </Button>
-        </motion.div>
       </div>
     </section>
   );

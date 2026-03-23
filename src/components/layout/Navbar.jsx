@@ -11,7 +11,7 @@ const navLinks = [
   { href: "/collections/snapbacks", label: "Snapbacks" },
   { href: "/collections/beanies", label: "Beanies" },
   { href: "/collections/bucket-hats", label: "Bucket Hats" },
-  { href: "/about", label: "About" },
+  // { href: "/about", label: "About" },
 ];
 
 export default function Navbar() {
