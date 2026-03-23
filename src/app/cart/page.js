@@ -25,7 +25,7 @@ export default function CartPage() {
     updateQuantity,
     removeFromCart,
     clearCart,
-    cartTotal,
+    cartSubtotal,
     cartCount,
     checkoutUrl,
     isLoading,
@@ -233,18 +233,18 @@ export default function CartPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex justify-between text-[14px]">
                     <span className="text-gray">Items ({cartCount})</span>
-                    <span>${cartTotal.toFixed(2)}</span>
+                    <span>${cartSubtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-[14px]">
                     <span className="text-gray">Shipping</span>
-                    <span>Calculated at checkout</span>
+                    <span className="text-gray text-[13px]">Calculated at checkout</span>
                   </div>
                 </div>
 
                 <div className="border-t border-border pt-4 mb-6">
                   <div className="flex justify-between font-display text-xl">
                     <span>Subtotal</span>
-                    <span className="text-green">${cartTotal.toFixed(2)}</span>
+                    <span className="text-green">${cartSubtotal.toFixed(2)}</span>
                   </div>
                 </div>
 
