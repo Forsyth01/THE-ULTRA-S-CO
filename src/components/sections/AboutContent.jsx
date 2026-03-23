@@ -37,7 +37,7 @@ export default function AboutContent() {
             className="relative aspect-square rounded-xl overflow-hidden"
           >
             <Image
-              src="/uc.jpg"
+              src="/headwarmer/headwarmer (7).jpg"
               alt="The Ultra's Co"
               fill
               className="object-cover"

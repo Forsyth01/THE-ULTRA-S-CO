@@ -22,7 +22,7 @@ export default function About() {
       >
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-radial from-green/10 via-transparent to-transparent" />
-<img src="/uc.jpg" alt="" className="object-cover" />
+<img   src="/headwarmer/headwarmer (7).jpg" alt="" className="object-cover" />
         {/* Large UC text */}
         {/* <span className="font-display text-[80px] md:text-[120px] text-border select-none">
           UC
