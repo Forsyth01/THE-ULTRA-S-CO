@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import {
   createCart,
   addToCart as addToCartApi,
@@ -23,6 +23,16 @@ export function CartProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingItems, setLoadingItems] = useState(new Set());
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Queue system to prevent race conditions
+  const cartIdRef = useRef(null);
+  const pendingOperations = useRef([]);
+  const isProcessing = useRef(false);
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    cartIdRef.current = cart.id;
+  }, [cart.id]);
 
   // Function to refresh cart from Shopify
   const refreshCart = useCallback(async () => {
@@ -85,24 +95,32 @@ export function CartProvider({ children }) {
     }
   }, [cart.id]);
 
-  const addToCart = useCallback(
-    async (variantId, quantity = 1) => {
-      setLoadingItems((prev) => new Set(prev).add(variantId));
+  // Process queued operations sequentially
+  const processQueue = useCallback(async () => {
+    if (isProcessing.current || pendingOperations.current.length === 0) return;
+
+    isProcessing.current = true;
+
+    while (pendingOperations.current.length > 0) {
+      const { variantId, quantity, resolve } = pendingOperations.current.shift();
+
       try {
         const lines = [{ merchandiseId: variantId, quantity }];
-
         let shopifyCart;
-        if (cart.id) {
-          shopifyCart = await addToCartApi(cart.id, lines);
+
+        if (cartIdRef.current) {
+          shopifyCart = await addToCartApi(cartIdRef.current, lines);
         } else {
           shopifyCart = await createCart(lines);
         }
 
-        setCart(transformCart(shopifyCart));
-        return true;
+        const transformedCart = transformCart(shopifyCart);
+        cartIdRef.current = transformedCart.id;
+        setCart(transformedCart);
+        resolve(true);
       } catch (error) {
         console.error("Error adding to cart:", error);
-        return false;
+        resolve(false);
       } finally {
         setLoadingItems((prev) => {
           const next = new Set(prev);
@@ -110,8 +128,21 @@ export function CartProvider({ children }) {
           return next;
         });
       }
+    }
+
+    isProcessing.current = false;
+  }, []);
+
+  const addToCart = useCallback(
+    (variantId, quantity = 1) => {
+      setLoadingItems((prev) => new Set(prev).add(variantId));
+
+      return new Promise((resolve) => {
+        pendingOperations.current.push({ variantId, quantity, resolve });
+        processQueue();
+      });
     },
-    [cart.id]
+    [processQueue]
   );
 
   const isItemLoading = useCallback(

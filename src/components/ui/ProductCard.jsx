@@ -32,11 +32,11 @@ export default function ProductCard({ product }) {
   };
 
   return (
-    <Link href={`/products/${product.slug}`} className="block group cursor-pointer overflow-hidden">
+    <Link href={`/products/${product.slug}`} className="flex flex-col h-full group cursor-pointer overflow-hidden">
       {/* Image Container */}
       <motion.div
         whileHover={{ scale: 1.02 }}
-        className="relative aspect-square bg-mid rounded-lg mb-2 sm:mb-3.5 overflow-hidden"
+        className="relative aspect-square bg-mid rounded-lg mb-2 sm:mb-3.5 overflow-hidden flex-shrink-0"
       >
         {product.badge && (
           <span
@@ -57,17 +57,21 @@ export default function ProductCard({ product }) {
       </motion.div>
 
       {/* Product Info */}
-      <div className="text-[10px] sm:text-[12px] text-gray tracking-[0.06em] uppercase mb-0.5 sm:mb-1">
-        {product.category}
+      <div className="flex flex-col flex-grow">
+        <div className="text-[10px] sm:text-[12px] text-gray tracking-[0.06em] uppercase mb-0.5 sm:mb-1">
+          {product.category}
+        </div>
+        <h3 className="text-[12px] sm:text-[14px] font-medium mb-0.5 sm:mb-1 line-clamp-2 min-h-[2.4em]">
+          {product.name}
+        </h3>
+        <div className="font-display text-base sm:text-lg mb-2 sm:mb-2.5">${product.price}</div>
       </div>
-      <h3 className="text-[12px] sm:text-[14px] font-medium mb-0.5 sm:mb-1 line-clamp-2">{product.name}</h3>
-      <div className="font-display text-base sm:text-lg">${product.price}</div>
 
       {/* Add to Cart Button */}
       <motion.button
         whileHover={!isOutOfStock && !isLoading ? { scale: 1.02 } : {}}
         whileTap={!isOutOfStock && !isLoading ? { scale: 0.98 } : {}}
-        className={`w-full mt-2 sm:mt-2.5 border text-[10px] sm:text-[11px] font-semibold tracking-[0.08em] sm:tracking-[0.1em] uppercase py-2 sm:py-2.5 rounded transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${
+        className={`w-full border text-[10px] sm:text-[11px] font-semibold tracking-[0.08em] sm:tracking-[0.1em] uppercase py-2 sm:py-2.5 rounded transition-all flex items-center justify-center gap-1.5 sm:gap-2 ${
           isOutOfStock
             ? "bg-mid border-border text-gray cursor-not-allowed opacity-60"
             : isLoading
