@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ShoppingBag, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import SearchModal from "@/components/ui/SearchModal";
 
 const navLinks = [
   { href: "/shop", label: "Shop All" },
@@ -16,6 +17,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { cartCount } = useCart();
 
@@ -71,14 +73,15 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2 xs:gap-3 sm:gap-4 md:gap-5">
-          <Link
+          {/* <Link
             href="/contact"
             className="hidden lg:block text-[12px] xl:text-[13px] font-medium tracking-[0.06em] uppercase text-gray hover:text-white transition-colors duration-200"
           >
             Contact
-          </Link>
+          </Link> */}
 
           <button
+            onClick={() => setIsSearchOpen(true)}
             className="p-2 text-gray hover:text-white transition-colors"
             aria-label="Search"
           >
@@ -173,13 +176,13 @@ export default function Navbar() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 + navLinks.length * 0.05 }}
                   >
-                    <Link
+                    {/* <Link
                       href="/contact"
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="block px-5 py-4 text-[15px] font-medium tracking-[0.04em] uppercase text-white hover:text-green hover:bg-mid/50 transition-all border-b border-border/50"
                     >
                       Contact
-                    </Link>
+                    </Link> */}
                   </motion.li>
                 </ul>
               </nav>
@@ -199,6 +202,9 @@ export default function Navbar() {
           </>
         )}
       </AnimatePresence>
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </nav>
   );
 }

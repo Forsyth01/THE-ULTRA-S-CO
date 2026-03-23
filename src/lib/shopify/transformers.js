@@ -5,6 +5,12 @@ export function transformProduct(shopifyProduct) {
   const firstImage = shopifyProduct.images?.edges?.[0]?.node;
   const firstVariant = shopifyProduct.variants?.edges?.[0]?.node;
 
+  // Get all images
+  const images = shopifyProduct.images?.edges?.map(({ node }) => ({
+    url: node.url,
+    alt: node.altText || shopifyProduct.title,
+  })) || [];
+
   // Get category from Shopify's product category (falls back to productType, then "Uncategorized")
   const category = shopifyProduct.category?.name || shopifyProduct.productType || "Uncategorized";
 
@@ -27,6 +33,7 @@ export function transformProduct(shopifyProduct) {
     slug: shopifyProduct.handle,
     image: firstImage?.url || "/placeholder.jpg",
     imageAlt: firstImage?.altText || shopifyProduct.title,
+    images: images,
     description: shopifyProduct.description || "",
     descriptionHtml: shopifyProduct.descriptionHtml || "",
     availableForSale: availableForSale,

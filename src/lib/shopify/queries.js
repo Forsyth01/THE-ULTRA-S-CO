@@ -177,3 +177,46 @@ export const GET_COLLECTION_BY_HANDLE = `
     }
   }
 `;
+
+// Search products
+export const SEARCH_PRODUCTS = `
+  query SearchProducts($query: String!, $first: Int!) {
+    products(first: $first, query: $query) {
+      edges {
+        node {
+          id
+          title
+          handle
+          productType
+          tags
+          category {
+            name
+          }
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
+              }
+            }
+          }
+          availableForSale
+          variants(first: 1) {
+            edges {
+              node {
+                id
+                availableForSale
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;

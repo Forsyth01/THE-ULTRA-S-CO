@@ -5,6 +5,7 @@ import {
   GET_PRODUCT,
   GET_COLLECTIONS,
   GET_COLLECTION_BY_HANDLE,
+  SEARCH_PRODUCTS,
 } from "./queries";
 
 /**
@@ -61,4 +62,16 @@ export async function getCollectionByHandle(handle, productLimit = 50) {
       transformProduct(node)
     ),
   };
+}
+
+/**
+ * Search products by query
+ */
+export async function searchProducts(query, limit = 20) {
+  const data = await shopifyFetch({
+    query: SEARCH_PRODUCTS,
+    variables: { query, first: limit },
+  });
+
+  return data.products.edges.map(({ node }) => transformProduct(node));
 }
