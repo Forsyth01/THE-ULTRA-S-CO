@@ -29,7 +29,7 @@ const announcements = [
       <>
         <span>Free Ship</span>
         <span>—</span>
-        <span>Orders $60+</span>
+        <span>Orders $50+</span>
       </>
     ),
     desktop: <span>Free shipping on all orders over $60</span>,
