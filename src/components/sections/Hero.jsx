@@ -107,7 +107,7 @@ export default function Hero() {
         >
           <span className="text-black">Free Shipping</span>
           <br />
-          <span className="text-black">Orders $60+</span>
+          <span className="text-black">Orders $50+</span>
         </motion.div>
 
         {/* Decorative circles - hidden on very small screens */}
