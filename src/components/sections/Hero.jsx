@@ -6,9 +6,9 @@ import Image from "next/image";
 import Button from "@/components/ui/Button";
 
 const heroImages = [
-  "/headwarmer/headwarmer (6).jpg",
-  "/headwarmer/headwarmer (7).jpg",
-  "/headwarmer/headwarmer (4).jpg",
+  "/headwarmer/hero1.jpg",
+  "/headwarmer/hero2.jpg",
+  "/headwarmer/hero3.jpg",
 ];
 
 export default function Hero() {
