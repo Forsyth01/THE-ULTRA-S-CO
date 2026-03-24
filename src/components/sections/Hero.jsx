@@ -7,7 +7,7 @@ import Button from "@/components/ui/Button";
 
 const heroImages = [
   "/headwarmer/hero1.jpeg",
-  "/headwarmer/hero2.jpeg",
+  "/headwarmer/hero2.jpg",
   "/headwarmer/hero3.jpg",
   "/headwarmer/hero4.jpeg",
 ];
