@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
           `}
         </Script>
       </head>
-      <body className="min-h-screen bg-black text-white font-body antialiased">
+      <body className="min-h-screen bg-black text-white font-body antialiased">  
         <Providers>
           <ScrollToTop />
           {children}
