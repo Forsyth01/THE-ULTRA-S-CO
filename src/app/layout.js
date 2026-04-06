@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="min-h-screen bg-black text-white font-body antialiased">  
         <Providers>
-          <ScrollToTop />
+          <ScrollToTop />  
           {children}
         </Providers>
       </body>
