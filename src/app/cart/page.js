@@ -28,6 +28,7 @@ export default function CartPage() {
     cartSubtotal,
     cartCount,
     checkoutUrl,
+    isLocalCart,
     isLoading,
     isLoaded,
   } = useCart();
@@ -255,6 +256,13 @@ export default function CartPage() {
                   >
                     <span className="text-black">Proceed to Checkout</span>
                   </a>
+                ) : isLocalCart ? (
+                  <Link
+                    href="/checkout"
+                    className="w-full bg-green py-4 rounded text-[13px] font-semibold tracking-[0.08em] uppercase hover:opacity-85 transition-opacity block text-center"
+                  >
+                    <span className="text-black">Proceed to Checkout</span>
+                  </Link>
                 ) : (
                   <button
                     disabled

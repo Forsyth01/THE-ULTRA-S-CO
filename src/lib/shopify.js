@@ -36,7 +36,8 @@ export async function shopifyFetch({ query, variables = {} }) {
 
     return json.data;
   } catch (error) {
-    console.error("Shopify fetch error:", error.message);
+    // Warn rather than error: callers fall back to the local catalog
+    console.warn("Shopify fetch error:", error.message);
     throw error;
   }
 }

@@ -9,8 +9,42 @@ import {
   getCart,
 } from "@/lib/shopify/cart";
 import { transformCart } from "@/lib/shopify/transformers";
+import { products as localProducts } from "@/data/products";
 
 const CartContext = createContext();
+
+// Local catalog products (used while Shopify is unreachable) get a browser-only cart
+const LOCAL_CART_ID = "local-cart";
+const isLocalVariant = (variantId) => variantId?.startsWith("demo-variant-");
+
+function getLocalLines(cart) {
+  if (cart.id !== LOCAL_CART_ID) return [];
+  return cart.items.map(({ variantId, quantity }) => ({ variantId, quantity }));
+}
+
+function buildLocalCart(lines) {
+  const items = lines
+    .map(({ variantId, quantity }) => {
+      const product = localProducts.find((p) => p.variantId === variantId);
+      if (!product) return null;
+
+      return {
+        lineId: variantId,
+        variantId,
+        name: product.name,
+        variantTitle: null,
+        price: product.price,
+        quantity,
+        image: product.image,
+        slug: product.slug,
+      };
+    })
+    .filter(Boolean);
+
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  return { id: LOCAL_CART_ID, checkoutUrl: null, items, subtotal, total: subtotal };
+}
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState({
@@ -38,7 +72,13 @@ export function CartProvider({ children }) {
   const refreshCart = useCallback(async () => {
     const savedCartId = localStorage.getItem("shopifyCartId");
 
-    if (savedCartId) {
+    if (savedCartId === LOCAL_CART_ID) {
+      try {
+        setCart(buildLocalCart(JSON.parse(localStorage.getItem("localCartLines") || "[]")));
+      } catch {
+        localStorage.removeItem("localCartLines");
+      }
+    } else if (savedCartId) {
       try {
         const shopifyCart = await getCart(savedCartId);
         if (shopifyCart) {
@@ -55,7 +95,7 @@ export function CartProvider({ children }) {
           });
         }
       } catch (error) {
-        console.error("Error loading cart:", error);
+        console.warn("Error loading cart:", error);
         localStorage.removeItem("shopifyCartId");
       }
     }
@@ -95,6 +135,13 @@ export function CartProvider({ children }) {
     }
   }, [cart.id]);
 
+  // Persist local cart lines so they survive a page reload
+  useEffect(() => {
+    if (cart.id === LOCAL_CART_ID) {
+      localStorage.setItem("localCartLines", JSON.stringify(getLocalLines(cart)));
+    }
+  }, [cart]);
+
   // Process queued operations sequentially
   const processQueue = useCallback(async () => {
     if (isProcessing.current || pendingOperations.current.length === 0) return;
@@ -105,10 +152,23 @@ export function CartProvider({ children }) {
       const { variantId, quantity, resolve } = pendingOperations.current.shift();
 
       try {
+        if (isLocalVariant(variantId)) {
+          setCart((prev) => {
+            const lines = getLocalLines(prev);
+            const existing = lines.find((line) => line.variantId === variantId);
+            if (existing) existing.quantity += quantity;
+            else lines.push({ variantId, quantity });
+            return buildLocalCart(lines);
+          });
+          cartIdRef.current = LOCAL_CART_ID;
+          resolve(true);
+          continue;
+        }
+
         const lines = [{ merchandiseId: variantId, quantity }];
         let shopifyCart;
 
-        if (cartIdRef.current) {
+        if (cartIdRef.current && cartIdRef.current !== LOCAL_CART_ID) {
           shopifyCart = await addToCartApi(cartIdRef.current, lines);
         } else {
           shopifyCart = await createCart(lines);
@@ -154,6 +214,17 @@ export function CartProvider({ children }) {
     async (lineId, quantity) => {
       if (!cart.id || quantity < 1) return;
 
+      if (cart.id === LOCAL_CART_ID) {
+        setCart((prev) =>
+          buildLocalCart(
+            getLocalLines(prev).map((line) =>
+              line.variantId === lineId ? { ...line, quantity } : line
+            )
+          )
+        );
+        return;
+      }
+
       setIsLoading(true);
       try {
         const shopifyCart = await updateCart(cart.id, [{ id: lineId, quantity }]);
@@ -170,6 +241,13 @@ export function CartProvider({ children }) {
   const removeFromCart = useCallback(
     async (lineId) => {
       if (!cart.id) return;
+
+      if (cart.id === LOCAL_CART_ID) {
+        setCart((prev) =>
+          buildLocalCart(getLocalLines(prev).filter((line) => line.variantId !== lineId))
+        );
+        return;
+      }
 
       setIsLoading(true);
       try {
@@ -193,6 +271,7 @@ export function CartProvider({ children }) {
       total: 0,
     });
     localStorage.removeItem("shopifyCartId");
+    localStorage.removeItem("localCartLines");
   }, []);
 
   // Count unique items in cart (not total quantity)
@@ -204,6 +283,7 @@ export function CartProvider({ children }) {
         cart: cart.items,
         cartId: cart.id,
         checkoutUrl: cart.checkoutUrl,
+        isLocalCart: cart.id === LOCAL_CART_ID,
         addToCart,
         removeFromCart,
         updateQuantity,
